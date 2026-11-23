@@ -12,6 +12,7 @@
   <style>
     :root{--ink:#e9ece6;--muted:#9ca69c;--paper:#090d0b;--card:#111713;--line:#29332c;--orange:#c9f25a;--yellow:#d7f679;--blue:#c9f25a;--green:#b8e95a}
     body{background:var(--paper);color:var(--ink)}
+    #field{position:fixed;inset:0;width:100%;height:100%;opacity:.6;pointer-events:none;z-index:0}.shell{position:relative;z-index:1}@media(prefers-reduced-motion:reduce){#field{display:none}}
     .topbar{border-color:var(--line)}.brand-mark{background:var(--orange);color:#090d0b}.brand{color:var(--ink)}
     .hero{max-width:900px}.hero-copy{color:var(--muted)}h1{font-size:clamp(52px,9vw,112px);letter-spacing:-.09em;text-transform:uppercase}h1 em{font-family:Georgia,serif;color:var(--orange);text-transform:none}.hero-meta span:first-child{color:var(--orange)}
     .mode-switcher{background:#151c17}.mode-button{color:var(--muted)}.mode-button.is-active{background:var(--orange);color:#090d0b}
@@ -26,6 +27,7 @@
   </style>
 </head>
 <body>
+  <canvas id="field" aria-hidden="true"></canvas>
   <main class="shell">
     <header class="topbar">
       <a class="brand" href="#top" aria-label="PhysicsShark home"><span class="brand-mark">P</span><span>PhysicsShark</span></a>
@@ -62,8 +64,9 @@
         <div class="notice"><span class="notice-icon">!</span><p><strong>Nominate one Shark.</strong> This teammate joins the host in judging the other teams.</p></div>
         <div class="form-actions"><span id="teamStatus" class="form-status" role="status"></span><button class="primary-button" type="submit">Continue to the wheel <span>↗</span></button></div>
       </form>
+      <details id="recoveryArea"><summary>Return to a saved team</summary><form id="recoveryForm"><p>Enter your room code and the recovery code your team received after its spin.</p><label class="field"><span>Room code</span><input id="recoveryRoom" maxlength="12" required></label><label class="field"><span>Team recovery code</span><input id="recoveryCode" maxlength="80" required autocomplete="off"></label><button class="secondary-button" type="submit">Open assignment</button><p id="recoveryStatus" role="status"></p></form></details>
       <section id="wheelScreen" class="wheel-screen" hidden aria-labelledby="wheelTitle"><div class="eyebrow">Challenge selection</div><h2 id="wheelTitle">Wheel of death</h2><p>Spin to discover your team’s challenge.</p><div class="wheel-stage"><div class="wheel-pointer" aria-hidden="true">▼</div><div id="wheel" class="wheel" aria-hidden="true"><span style="--a:30deg">1</span><span style="--a:90deg">2</span><span style="--a:150deg">3</span><span style="--a:210deg">4</span><span style="--a:270deg">5</span><span style="--a:330deg">6</span></div></div><button id="spinButton" class="primary-button" type="button">Spin the wheel</button><p id="spinStatus" role="status"></p></section>
-      <section id="downloadScreen" class="download-screen" hidden aria-labelledby="downloadTitle"><div class="eyebrow" id="cardNumber"></div><h2 id="downloadTitle"></h2><p>Your challenge is ready. Open the card and the matching Python starter in new tabs.</p><div class="download-links"><a id="cardDownload" class="primary-button" target="_blank" rel="noopener noreferrer">Open challenge card</a><a id="starterDownload" class="secondary-button" target="_blank" rel="noopener noreferrer">Open Python starter</a></div><p id="wheelStatus" class="wheel-status" role="status"></p><button id="retrySaveButton" class="secondary-button" type="button" hidden>Retry saving</button><div id="uploadPanel" class="upload-panel" hidden><div class="eyebrow">Submit your work</div><h3>Share your team's files</h3><p>Upload code, prompt logs, plots, or a short report. Up to 2 MB per file. Keep this page open until the upload finishes.</p><label class="field"><span>Choose one or more files</span><input id="workFiles" type="file" multiple></label><button id="uploadWork" class="primary-button" type="button">Upload work</button><p id="uploadStatus" role="status"></p></div><button id="newTeamButton" class="secondary-button" type="button">Enter another team</button></section>
+      <section id="downloadScreen" class="download-screen" hidden aria-labelledby="downloadTitle"><div class="eyebrow" id="cardNumber"></div><h2 id="downloadTitle"></h2><p>Your challenge is ready. Open the card and the matching Python starter in new tabs.</p><div class="download-links"><a id="cardDownload" class="primary-button" target="_blank" rel="noopener noreferrer">Open challenge card</a><a id="starterDownload" class="secondary-button" target="_blank" rel="noopener noreferrer">Open Python starter</a></div><p id="wheelStatus" class="wheel-status" role="status"></p><button id="retrySaveButton" class="secondary-button" type="button" hidden>Retry saving</button><div id="uploadPanel" class="upload-panel" hidden><div class="eyebrow">Submit your work</div><h3>Share your team's files</h3><p>Save this recovery code and your room code to return from another computer. Your host can also look up the code.</p><p>Room: <strong id="savedRoomCode"></strong><br>Recovery code: <strong id="savedTeamCode" style="overflow-wrap:anywhere"></strong></p><button id="copyRecovery" class="secondary-button" type="button">Copy recovery code</button><p>Upload code, prompt logs, plots, or a short report. Up to 2 MB per file. Keep this page open until the upload finishes.</p><label class="field"><span>Choose one or more files</span><input id="workFiles" type="file" multiple></label><button id="uploadWork" class="primary-button" type="button">Upload work</button><p id="uploadStatus" role="status"></p></div><button id="newTeamButton" class="secondary-button" type="button">Enter another team</button></section>
     </section>
 
     <section id="hostView" class="view" aria-labelledby="hostTitle">
@@ -82,6 +85,7 @@
 
     <footer><span>PhysicsShark / AE 107 Lab Game</span><span>Built for the lab</span></footer>
   </main>
+  <script src="flow-field.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
